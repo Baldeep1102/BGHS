@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bhagavad G&#x012B;t&#x0101; Home Study - Summary</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --saffron: #D4790E;
+      --saffron-light: #F5A623;
+      --saffron-glow: #FFF3E0;
+      --cream: #FFF9F0;
+      --cream-dark: #F5EDE0;
+      --brown: #4A2C0A;
+      --brown-light: #6D4C2A;
+      --text: #3B2506;
+      --text-light: #7A5C3A;
+      --green: #2E7D32;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ---- Header ---- */
+    header {
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--saffron-light) 100%);
+      padding: 2rem 1rem 1.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+
+    .header-content {
+      position: relative; z-index: 1;
+      max-width: 800px; margin: 0 auto;
+    }
+
+    .swami-photo {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      object-fit: cover; object-position: top;
+      border: 4px solid rgba(255,255,255,0.6);
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+
+    header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; font-weight: 700;
+      color: white; line-height: 1.2;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    header h1 span {
+      display: block; font-size: 1rem; font-weight: 400;
+      font-family: 'Inter', sans-serif; opacity: 0.9; margin-top: 0.3rem;
+    }
+    .subtitle {
+      color: rgba(255,255,255,0.85);
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; margin-top: 0.5rem;
+    }
+
+    /* ---- Main ---- */
+    main { max-width: 800px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+    .books-banner {
+      width: 100%; max-height: 180px;
+      object-fit: cover; border-radius: 12px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 12px rgba(74,44,10,0.12);
+    }
+
+    /* ---- Upload ---- */
+    .upload-section {
+      background: white;
+      border: 2px dashed var(--saffron);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+    .upload-section:hover, .upload-section.dragover {
+      background: var(--saffron-glow);
+      border-color: var(--saffron-light);
+    }
+    .upload-section.disabled { pointer-events: none; opacity: 0.5; }
+    .upload-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .upload-section h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-weight: 600; color: var(--brown);
+      margin-bottom: 0.3rem;
+    }
+    .upload-section p { color: var(--text-light); font-size: 0.85rem; }
+    .upload-section input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer;
+    }
+
+    /* ---- Spinner ---- */
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--cream-dark);
+      border-top-color: var(--saffron);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block; vertical-align: middle;
+    }
+    .spinner-sm { width: 20px; height: 20px; border-width: 2px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---- Progress ---- */
+    .progress-section {
+      display: none; text-align: center; padding: 2rem 1rem;
+    }
+    .progress-section.active { display: block; }
+    .progress-text { color: var(--brown-light); font-size: 0.95rem; margin-top: 0.75rem; }
+
+    /* ---- Sections List ---- */
+    .sections-list { display: none; margin-top: 1.5rem; }
+    .sections-list.active { display: block; }
+
+    .sections-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .sections-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; color: var(--brown);
+    }
+
+    .btn {
+      border: none; padding: 0.5rem 1.2rem;
+      border-radius: 8px; font-size: 0.85rem;
+      font-weight: 500; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-primary { background: var(--saffron); color: white; }
+    .btn-primary:hover { background: var(--brown-light); }
+    .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+    .btn-outline {
+      background: none; border: 2px solid var(--saffron); color: var(--saffron);
+    }
+    .btn-outline:hover { background: var(--saffron); color: white; }
+    .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.75rem; }
+
+    /* ---- Section Card ---- */
+    .section-card {
+      background: white; border-radius: 12px;
+      padding: 1.2rem 1.5rem; margin-bottom: 0.75rem;
+      box-shadow: 0 1px 6px rgba(74,44,10,0.08);
+      border-left: 4px solid var(--cream-dark);
+      transition: border-color 0.3s;
+    }
+    .section-card.summarized { border-left-color: var(--saffron); }
+
+    .section-card-top {
+      display: flex; justify-content: space-between;
+      align-items: center; gap: 0.5rem;
+    }
+
+    .section-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; font-weight: 700; color: var(--brown);
+    }
+    .section-meta {
+      font-size: 0.75rem; color: var(--text-light); margin-top: 0.15rem;
+    }
+
+    .section-card-actions { display: flex; gap: 0.4rem; align-items: center; flex-shrink: 0; }
+
+    .section-progress {
+      font-size: 0.8rem; color: var(--text-light);
+      margin-top: 0.6rem; display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    /* ---- Summary Bullets ---- */
+    .section-summary {
+      margin-top: 0.75rem; display: none;
+    }
+    .section-summary.active { display: block; }
+
+    .section-summary ul { list-style: none; padding: 0; }
+    .section-summary li {
+      position: relative;
+      padding: 0.35rem 0 0.35rem 0;
+      font-size: 0.9rem; line-height: 1.55; color: var(--text);
+      padding-left: 1.8rem;
+    }
+    .section-summary li.topic-header {
+      padding-left: 0;
+      font-weight: 700;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      color: var(--brown);
+      margin-top: 0.8rem;
+      border-bottom: 1px solid var(--cream-dark);
+      padding-bottom: 0.25rem;
+    }
+    .section-summary li.topic-header:first-child { margin-top: 0; }
+
+    /* ---- Copy All Bar ---- */
+    .copy-all-bar {
+      display: none; text-align: center;
+      margin-top: 1rem; padding-top: 1rem;
+      border-top: 1px solid var(--cream-dark);
+    }
+    .copy-all-bar.active { display: block; }
+
+    /* ---- Error ---- */
+    .error-msg {
+      display: none; background: #FFF0F0; border: 1px solid #FFCDD2;
+      color: #C62828; padding: 1rem; border-radius: 8px;
+      margin-top: 1rem; font-size: 0.9rem;
+    }
+    .error-msg.active { display: block; }
+
+    /* ---- Toast ---- */
+    .toast {
+      position: fixed; bottom: 2rem; left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--brown); color: white;
+      padding: 0.7rem 1.5rem; border-radius: 8px;
+      font-size: 0.85rem; opacity: 0;
+      transition: all 0.3s ease; z-index: 100;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    .copy-btn-inline {
+      background: none; border: 1px solid var(--cream-dark);
+      color: var(--text-light); padding: 0.25rem 0.6rem;
+      border-radius: 6px; font-size: 0.7rem; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .copy-btn-inline:hover { border-color: var(--saffron); color: var(--saffron); }
+    .copy-btn-inline.copied { border-color: var(--green); color: var(--green); }
+
+    footer {
+      text-align: center; padding: 1rem;
+      color: var(--text-light); font-style: italic;
+      font-family: 'Cormorant Garamond', serif; font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 1.5rem 1rem 1.2rem; }
+      .swami-photo { width: 90px; height: 90px; }
+      header h1 { font-size: 1.4rem; }
+      main { padding: 1rem 0.75rem 3rem; }
+      .upload-section { padding: 1.5rem 1rem; }
+      .section-card { padding: 1rem; }
+      .section-card h3 { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <img src="/images/Swami pic.jpg" alt="Pujya Swami Dayananda Saraswati" class="swami-photo" />
+      <h1>
+        Bhagavad G&#x012B;t&#x0101; Home Study
+        <span>Section Summary Generator</span>
+      </h1>
+      <p class="subtitle">Based on the teachings of Pujya Swami Dayananda Saraswati</p>
+    </div>
+  </header>
+
+  <main>
+    <img src="/images/BGHSbooks.jpg" alt="Bhagavad Gita Home Study Course - 9 Volumes" class="books-banner" />
+
+    <!-- Upload -->
+    <div class="upload-section" id="uploadArea">
+      <div class="upload-icon">&#x1F4D6;</div>
+      <h2>Upload a Volume</h2>
+      <p>Drop a PDF here or tap to select</p>
+      <input type="file" id="fileInput" accept="application/pdf" />
+    </div>
+
+    <!-- Extracting progress -->
+    <div class="progress-section" id="extractProgress">
+      <div class="spinner"></div>
+      <p class="progress-text">Extracting text and identifying sections...</p>
+    </div>
+
+    <!-- Error -->
+    <div class="error-msg" id="errorMsg"></div>
+
+    <!-- Sections List -->
+    <div class="sections-list" id="sectionsList">
+      <div class="sections-header">
+        <h2 id="sectionsTitle">Sections</h2>
+        <div style="display:flex;gap:0.5rem;">
+          <button class="btn btn-primary" id="summarizeAllBtn" onclick="summarizeAll()">Summarize All</button>
+          <button class="btn btn-outline" onclick="resetUpload()">New Upload</button>
+        </div>
+      </div>
+      <div id="sectionsContainer"></div>
+      <div class="copy-all-bar" id="copyAllBar">
+        <button class="btn btn-primary" onclick="copyAll()">Copy All Summaries</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>&#x0950; &nbsp; Tat Tvam Asi &nbsp; &#x0950;</footer>
+  <div class="toast" id="toast">Copied to clipboard!</div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const uploadArea = document.getElementById('uploadArea');
+    const extractProgress = document.getElementById('extractProgress');
+    const sectionsList = document.getElementById('sectionsList');
+    const sectionsContainer = document.getElementById('sectionsContainer');
+    const sectionsTitle = document.getElementById('sectionsTitle');
+    const errorMsg = document.getElementById('errorMsg');
+    const toast = document.getElementById('toast');
+    const copyAllBar = document.getElementById('copyAllBar');
+    const summarizeAllBtn = document.getElementById('summarizeAllBtn');
+
+    let currentUploadId = null;
+    let sections = []; // { name, charCount, wordCount, bullets: null | [...] }
+
+    // Drag & drop
+    uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      if (e.dataTransfer.files.length && e.dataTransfer.files[0].type === 'application/pdf') {
+        fileInput.files = e.dataTransfer.files;
+        handleUpload(e.dataTransfer.files[0]);
+      }
+    });
+    fileInput.addEventListener('change', () => { if (fileInput.files.length) handleUpload(fileInput.files[0]); });
+
+    // ─── STEP 1: Upload & Extract Sections ───
+    async function handleUpload(file) {
+      uploadArea.classList.add('disabled');
+      extractProgress.classList.add('active');
+      sectionsList.classList.remove('active');
+      errorMsg.classList.remove('active');
+
+      const formData = new FormData();
+      formData.append('pdf', file);
+
+      try {
+        const res = await fetch('/api/extract', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Extraction failed');
+
+        currentUploadId = data.uploadId;
+        sections = data.sections.map(s => ({ ...s, bullets: null }));
+        renderSections();
+      } catch (err) {
+        errorMsg.textContent = err.message;
+        errorMsg.classList.add('active');
+      } finally {
+        extractProgress.classList.remove('active');
+        uploadArea.classList.remove('disabled');
+      }
+    }
+
+    // ─── Render section cards ───
+    function renderSections() {
+      sectionsTitle.textContent = `${sections.length} Sections Found`;
+      sectionsContainer.innerHTML = '';
+
+      sections.forEach((sec, i) => {
+        const card = document.createElement('div');
+        card.className = 'section-card' + (sec.bullets ? ' summarized' : '');
+        card.id = `section-${i}`;
+
+        const approxPages = Math.round(sec.wordCount / 300);
+        card.innerHTML = `
+          <div class="section-card-top">
+            <div>
+              <h3>${escapeHtml(sec.name)}</h3>
+              <div class="section-meta">~${approxPages} page${approxPages !== 1 ? 's' : ''} &middot; ${sec.wordCount.toLocaleString()} words</div>
+            </div>
+            <div class="section-card-actions">
+              ${sec.bullets
+                ? `<button class="copy-btn-inline" onclick="copySection(${i}, this)">Copy</button>`
+                : `<button class="btn btn-primary btn-sm" id="sum-btn-${i}" onclick="summarizeOne(${i})">Summarize</button>`
+              }
+            </div>
+          </div>
+          <div class="section-progress" id="progress-${i}" style="display:none;">
+            <div class="spinner spinner-sm"></div>
+            <span id="progress-text-${i}">Summarizing...</span>
+          </div>
+          <div class="section-summary ${sec.bullets ? 'active' : ''}" id="summary-${i}">
+            ${sec.bullets ? `<ul>${sec.bullets.map(b => {
+              const isHeader = b.trim().startsWith('\u{1F4CC}');
+              return `<li class="${isHeader ? 'topic-header' : ''}">${escapeHtml(b)}</li>`;
+            }).join('')}</ul>` : ''}
+          </div>
+        `;
+        sectionsContainer.appendChild(card);
+      });
+
+      sectionsList.classList.add('active');
+
+      // Show copy all bar if any section has been summarized
+      copyAllBar.classList.toggle('active', sections.some(s => s.bullets));
+    }
+
+    // ─── STEP 2: Summarize one section (SSE for progress) ───
+    function summarizeOne(index) {
+      return new Promise((resolve, reject) => {
+        const btn = document.getElementById(`sum-btn-${index}`);
+        const progress = document.getElementById(`progress-${index}`);
+        const progressText = document.getElementById(`progress-text-${index}`);
+
+        if (btn) btn.disabled = true;
+        progress.style.display = 'flex';
+        progressText.textContent = `Summarizing "${sections[index].name}"...`;
+
+        const url = `/api/summarize-section?uploadId=${currentUploadId}&sectionIndex=${index}`;
+        const source = new EventSource(url);
+
+        source.onmessage = (event) => {
+          const msg = JSON.parse(event.data);
+
+          if (msg.type === 'start' && msg.totalChunks > 1) {
+            progressText.textContent = `Summarizing "${sections[index].name}" (0/${msg.totalChunks} parts)...`;
+          } else if (msg.type === 'progress') {
+            if (msg.status === 'summarizing') {
+              progressText.textContent = `Summarizing part ${msg.chunk} of ${msg.totalChunks}...`;
+            } else if (msg.status === 'done') {
+              progressText.textContent = `Part ${msg.chunk}/${msg.totalChunks} done`;
+            } else if (msg.status === 'waiting') {
+              progressText.textContent = `Part ${msg.chunk}/${msg.totalChunks} done — waiting for rate limit...`;
+            }
+          } else if (msg.type === 'complete') {
+            source.close();
+            sections[index].bullets = msg.bullets;
+            progress.style.display = 'none';
+            renderSections();
+            resolve();
+          } else if (msg.type === 'error') {
+            source.close();
+            progressText.textContent = 'Error: ' + msg.message;
+            if (btn) btn.disabled = false;
+            reject(new Error(msg.message));
+          }
+        };
+
+        source.onerror = () => {
+          source.close();
+          progressText.textContent = 'Connection lost. Try again.';
+          if (btn) btn.disabled = false;
+          reject(new Error('Connection lost'));
+        };
+      });
+    }
+
+    // ─── Summarize All (sequentially) ───
+    async function summarizeAll() {
+      summarizeAllBtn.disabled = true;
+      for (let i = 0; i < sections.length; i++) {
+        if (!sections[i].bullets) {
+          await summarizeOne(i);
+        }
+      }
+      summarizeAllBtn.disabled = false;
+    }
+
+    // ─── Copy helpers ───
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function formatSectionText(sec) {
+      if (!sec.bullets) return '';
+      return `*${sec.name}*\n${sec.bullets.map(b => {
+        const isHeader = b.trim().startsWith('\u{1F4CC}');
+        return isHeader ? `\n${b}` : `  ${b}`;
+      }).join('\n')}`;
+    }
+
+    function copySection(index, btn) {
+      navigator.clipboard.writeText(formatSectionText(sections[index])).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        showToast();
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+
+    function copyAll() {
+      const summarized = sections.filter(s => s.bullets);
+      const text = '\uD83D\uDCD6 *Bhagavad G\u012Bt\u0101 Home Study - Section Summaries*\n\n'
+        + summarized.map(formatSectionText).join('\n\n');
+      navigator.clipboard.writeText(text).then(() => showToast());
+    }
+
+    function showToast() {
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    function resetUpload() {
+      fileInput.value = '';
+      sectionsList.classList.remove('active');
+      errorMsg.classList.remove('active');
+      copyAllBar.classList.remove('active');
+      currentUploadId = null;
+      sections = [];
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
