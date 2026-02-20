@@ -61,58 +61,78 @@ A web app to upload Bhagavad Gita Home Study Course PDF volumes and generate sec
 ## Current Architecture
 - **server.js** - Express backend with:
   - `POST /api/extract` - Upload PDF, extract text with `pdf-parse`, detect sections LOCALLY (no API), store in memory
-  - `POST /api/summarize-section` - Summarize one section using Gemini 2.0 Flash API
+  - `GET /api/summarize-section` - SSE endpoint: summarizes one section using Cerebras API (Llama 3.1 8B), streams chunk progress to frontend
+  - `normalizeDiacritics()` - Converts IAST transliteration from PDF (Gétä→Gita, Kåñëa→Krishna, etc.) before sending to LLM
+  - `splitIntoChunks()` - Auto-splits sections >25K chars at paragraph breaks
 - **public/index.html** - Responsive spiritual-themed frontend (saffron/cream, Swamiji photo, book covers)
   - Upload → instant section list → click "Summarize" per section or "Summarize All"
+  - SSE-based progress: shows "Part 2 of 5..." during chunked summarization
+  - Topic headers (📌) styled as bold sub-headings, emoji bullets for takeaways
   - Copy per section + Copy All buttons
 - **Images**: `Swami pic.jpg`, `BGHSbooks.jpg` served from `/images/`
 
-## What Works
+## What Works (ALL FIXED)
 - PDF upload and text extraction: OK (305 pages, 414K chars)
-- Local section detection: Partially works but needs tuning
-- Gemini summarization: Works for small sections (tested on Preface = 6.6K chars, got 10 bullets)
+- Local section detection: FIXED - detects all 4 sections (Introduction, Gita Dhyanam, Context of the Gita, Chapter 1)
+- IAST diacritics normalization: FIXED - Gétä→Gita, Kåñëa→Krishna, etc.
+- Preface filtered out automatically
+- Auto-chunking for large sections with SSE progress
+- Cerebras API: fast, free (1M tokens/day), no rate limit issues
+- Summary format: emoji bullets grouped under 📌 topic headers (retention-focused study notes)
 
 ## The 4 Major Sections in Volume 1 (what user actually wants)
-1. **Introduction**
-2. **Gita Dhyanam** (meditation verses)
-3. **Context of the Gita**
-4. **Chapter 1**
+1. **Introduction** (~102K chars, 5 chunks)
+2. **Gita Dhyanam** (~44K chars, 2 chunks)
+3. **Context of the Gita** (~84K chars, 4 chunks)
+4. **Chapter 1** (~176K chars, 7 chunks)
 
-Note: "Preface" is NOT a meaningful section - do not include it. Other volumes will have similar structure but with different chapter numbers.
+Note: "Preface" is NOT a meaningful section - filtered out automatically. Other volumes will have similar structure but with different chapter numbers.
 
-## Known Issues To Fix Next Session
+## API Keys & Credentials (in .env — NOT committed to git)
+- **CEREBRAS_API_KEY** - Current primary LLM (Llama 3.1 8B, 1M free tokens/day)
+- **GEMINI_API_KEY** - Backup (free tier, rate limits are problematic)
+- **ANTHROPIC_API_KEY** - Has key but $0 credits (user exploring $5 free credit claim)
 
-### 1. Section Detection Misses Key Sections
-Local detection found: Preface, Introduction, Chapter 1
-MISSING: **Gita Dhyanam** and **Context of the Gita** (the two most important ones besides Chapter 1!)
-- These headings may not appear as standalone lines in PDF text extraction
-- FIX NEEDED: Read the actual extracted text to see how these headings appear, then update regex patterns in `detectSections()` in server.js
-- Also: filter OUT "Preface" from results (or make it optional) since user doesn't want it
+## GitHub Repo
+https://github.com/Baldeep1102/BGHS (public, main branch)
 
-### 2. Large Sections Hit Gemini Rate Limit
-- "Introduction" section is 229,826 chars (~77K tokens) - too big for one Gemini API call on free tier
-- FIX NEEDED: Sub-chunk large sections (>30K chars) into smaller pieces, summarize each, then combine bullets
-- Add delays (60s) between sub-chunk calls to respect free tier TPM limits
-- Show progress to user during multi-chunk summarization
+## Deployment: LIVE on Render
+- **URL**: https://bghs.onrender.com (LIVE and working)
+- **Platform**: Render free tier — no credit card required
+- **Auto-deploys**: Every git push to main branch triggers a redeploy automatically
+- **Caveat**: Spins down after 15 min inactivity — first request after idle takes ~30 sec to wake up
+- **Env var set on Render**: `CEREBRAS_API_KEY` (set in Render dashboard → Environment)
+- **No Dockerfile needed**: Render uses native Node.js detection from package.json
 
-### 3. Summary Quality Target
-User expects ChatGPT / NotebookLM level quality. Gemini 2.0 Flash is good enough for this when it works.
+## WhatsApp / Social Share
+- Open Graph meta tags added to `public/index.html`
+- Preview image: `https://bghs.onrender.com/images/Swami%20pic.jpg` (Swamiji photo)
+- og:title, og:description, og:image, og:url all set
+- Favicon also set to Swami pic
 
-## API Keys & Credentials (in .env)
-- **Gemini API Key**: Set in `.env` as `GEMINI_API_KEY` (free tier, Google AI Studio)
-- Also tried: Anthropic (no credits), Groq (12K TPM too low for 70B), OpenRouter (free models frequently rate-limited upstream)
-- **Best option going forward**: Gemini 2.0 Flash direct API. Free tier has 1M TPM and 15 RPM - generous enough IF we don't exceed per-request limits.
+## Hosting Options Evaluated (for reference)
+- **Render** ✅ CHOSEN — Free, no card, auto-deploy from GitHub. Spins down after 15 min idle.
+- **Railway** ❌ — 30 days free then $5/mo. No card needed but not truly free long-term.
+- **Fly.io** ❌ — Free tier but requires credit card.
+- **Cloudways** ❌ — Avoided to not risk existing "Revent" project on same server.
+- **Octopus Deploy** ❌ — Not a hosting platform; it's a CI/CD orchestration tool. Irrelevant.
+- **Koyeb** ❌ — Requires credit card even for free tier.
+- **Render free tier spins down** — Known limitation, acceptable for study/occasional use.
 
 ## Lessons Learned
-- Groq free tier: 70B model has only 12K TPM - useless for large text. 8B model has higher TPM but poor quality.
-- OpenRouter free models: Frequently rate-limited upstream ("Provider returned error"). Unreliable for free tier.
-- DeepSeek R1 via OpenRouter: Returns `<think>` blocks that break JSON parsing. Stripped with regex but model is slow (~25s) and also rate-limited.
-- Gemini direct API: Works well but free tier rate limits accumulate across failed retries. Wait for reset (daily).
-- Local section detection is better than LLM-based: instant, free, no API issues. Just needs proper regex patterns.
-- ALWAYS sub-chunk large sections. Never send >30K chars in a single API call on free tiers.
+- Groq free tier: 70B model has only 12K TPM - useless for large text.
+- OpenRouter free models: Frequently rate-limited upstream. Unreliable.
+- Gemini direct API: Works but free tier rate limits are painful. Model fallback chain helps (2.0-flash → 1.5-flash → 1.5-flash-8b). `gemini-2.0-flash-lite` is DEPRECATED (404).
+- Anthropic API: Separate billing from $20/mo Claude Pro subscription. New accounts may not auto-get $5 free credits anymore.
+- Cerebras: Best free option found. 1M tokens/day, blazing fast inference, OpenAI-compatible API.
+- PDF IAST diacritics: pdf-parse extracts special chars (é,ä,ë,ñ,ç,å,ò,ö). Must normalize before LLM or output looks garbled.
+- Local section detection is better than LLM-based: instant, free, no API issues.
+- ALWAYS sub-chunk large sections. Never send >25K chars in a single API call.
+- Image filenames with spaces (e.g. "Swami pic.jpg") must be URL-encoded (%20) in HTML/meta tags.
+- WhatsApp caches link previews — old recipients won't see updated preview even after og tags are added.
 
 ## Dependencies (package.json)
-express, multer, pdf-parse, @google/generative-ai, @anthropic-ai/sdk, groq-sdk, dotenv
+express, multer, pdf-parse, dotenv
 
 ## How to Run
 ```
